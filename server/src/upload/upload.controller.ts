@@ -9,7 +9,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import path from 'path';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import {
   allowedExtensions,
