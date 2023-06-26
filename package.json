@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "cd server && npm ci && npm run build && npm run start"
+  },
   "dependencies": {
     "class-validator": "^0.14.0"
   }
