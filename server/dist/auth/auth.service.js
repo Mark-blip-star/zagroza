@@ -5,13 +5,56 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const user_entity_1 = require("../entities/user.entity");
+const typeorm_2 = require("typeorm");
+const bcrypt = require("bcryptjs");
+const token_service_1 = require("../token/token.service");
+const config_1 = require("@nestjs/config");
 let AuthService = class AuthService {
+    constructor(userRepository, tokenService, configService) {
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.configService = configService;
+    }
+    async login({ email, password }) {
+        try {
+            const _user = await this.userRepository.findOne({ where: { email } });
+            if (_user) {
+                const compared = await bcrypt.compare(password, _user.password);
+                if (!compared)
+                    throw new common_1.HttpException('incorrectPassword', common_1.HttpStatus.UNAUTHORIZED);
+                return await this.tokenService.generateToken({ email: _user.email }, await this.configService.get('JWT_SECRET'), await this.configService.get('JWT_EXPIRE'));
+            }
+            else {
+                const hashedPassword = await bcrypt.hash(password, 5);
+                const user = await this.userRepository.save({
+                    email,
+                    password: hashedPassword,
+                });
+                return await this.tokenService.generateToken({ email: user.email }, await this.configService.get('JWT_SECRET'), await this.configService.get('JWT_EXPIRE'));
+            }
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error.message);
+        }
+    }
 };
 AuthService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        token_service_1.TokenService,
+        config_1.ConfigService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map
