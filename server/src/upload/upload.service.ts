@@ -47,16 +47,20 @@ export class UploadService {
   }
 
   async bulkUpload(data: JobEntity[]): Promise<Object> {
-    await this.jobRepository
-      .createQueryBuilder()
-      .insert()
-      .into(JobEntity)
-      .values(data)
-      .execute();
+    try {
+      await this.jobRepository
+        .createQueryBuilder()
+        .insert()
+        .into(JobEntity)
+        .values(data)
+        .execute();
 
-    return {
-      message: 'CSV files successfully uploaded to database',
-    };
+      return {
+        message: 'CSV files successfully uploaded to database',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async writeCsvToFileSystem(

@@ -1,1 +1,1 @@
-s
+All allowed formats =\server\src\common\consts
