@@ -26,7 +26,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", csvFile);
 
-    fetch("http://localhost:3000/api/upload/upload-csv", {
+    fetch("https://yellow-academy.herokuapp.com/api/upload/upload-csv", {
       method: "POST",
       headers: {
         Authorization: localStorage.getItem("access_token"),
@@ -53,13 +53,16 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://yellow-academy.herokuapp.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (response.ok) {
         setError("");
