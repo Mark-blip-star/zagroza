@@ -16,12 +16,10 @@ export class AuthController {
   async getHello(
     @Body() data: UserLoginDto,
     @Res({ passthrough: true }) res,
-  ): Promise<string> {
+  ): Promise<Object> {
     try {
       const token = await this.authService.login(data);
-      res.cookie('access_token', token, {
-        maxAge: 168 * 60 * 60 * 1000,
-      });
+
       return token;
     } catch (error) {
       throw new BadRequestException(error.message);

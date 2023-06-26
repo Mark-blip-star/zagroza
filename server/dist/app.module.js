@@ -15,11 +15,16 @@ const database_module_1 = require("./database/database.module");
 const config_1 = require("@nestjs/config");
 const token_module_1 = require("./token/token.module");
 const upload_module_1 = require("./upload/upload.module");
+const path_1 = require("path");
+const serve_static_1 = require("@nestjs/serve-static");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(__dirname, '..', '..', 'client', 'build'),
+            }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),

@@ -23,9 +23,6 @@ let AuthController = class AuthController {
     async getHello(data, res) {
         try {
             const token = await this.authService.login(data);
-            res.cookie('access_token', token, {
-                maxAge: 168 * 60 * 60 * 1000,
-            });
             return token;
         }
         catch (error) {

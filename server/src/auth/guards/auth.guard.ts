@@ -17,17 +17,11 @@ export class JwtAuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
       const request: any = context.switchToHttp().getRequest();
-      const data = request.headers.cookie;
-      const cookieName = 'access_token';
-      const regex = new RegExp(`${cookieName}=([^;]+)`);
-      const match = data.match(regex);
-      const accessToken = match ? match[1] : null;
-
-      if (!data || !accessToken)
-        throw new UnauthorizedException('Please provide token');
+      const data = request.headers.authorization;
+      if (!data) throw new UnauthorizedException('Please provide token');
 
       const secret: string = this.configSerivce.get('JWT_SECRET');
-      request.user = jwt.verify(accessToken, secret);
+      request.user = jwt.verify(data, secret);
       return true;
     } catch (err) {
       console.log(err);
